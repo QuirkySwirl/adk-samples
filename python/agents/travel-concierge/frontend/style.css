@@ -1,0 +1,226 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-image: linear-gradient(to right top, #accbee, #c3d4f0, #d7ddf3, #e8e7f5, #f6f2f7);
+    margin: 0;
+    padding: 0; /* Changed from 20px to 0 for full-width containers */
+    display: flex; /* Using flex for centering page-container */
+    flex-direction: column; /* Stack landing-info and chat-container */
+    align-items: center; /* Center items horizontally */
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden; /* Prevent horizontal scroll from minor overflows */
+}
+
+.page-container { /* New wrapper for layout */
+    width: 100%;
+    max-width: 900px; /* Max width for the whole page content */
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center children like landing-info and chat-container */
+    gap: 20px; /* Space between landing-info and chat-container */
+}
+
+
+.container { /* Used by api_keys.html */
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    margin-top: 20px; /* Add some margin if body padding is 0 */
+}
+
+.card { /* Glassmorphic card style */
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    padding: 30px;
+    width: 100%; /* Make card take full width of its container */
+    box-sizing: border-box;
+}
+
+.landing-info { /* Specific styles for the new intro section */
+    text-align: center;
+    margin-bottom: 20px; /* Space below landing info */
+}
+
+.landing-info h2 {
+    font-size: 2em;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.landing-info p {
+    font-size: 1.1em;
+    color: #34495e;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+#loadExampleButton { /* Style for the new button */
+    background-color: #28a745; /* Green, for a positive action */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em; /* Slightly larger */
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#loadExampleButton:hover {
+    background-color: #218838; /* Darker green */
+    transform: translateY(-2px);
+}
+#loadExampleButton:disabled { /* Style for disabled button */
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+h1 { /* For api_keys.html */
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+p { /* General paragraph, might be overridden by .landing-info p */
+    font-size: 15px;
+    color: #34495e;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    color: #34495e;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input[type="password"],
+.form-group input[type="text"] {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-group input[type="password"]::placeholder,
+.form-group input[type="text"]::placeholder { /* Corrected selector */
+    color: #555;
+}
+
+
+.form-group input[type="password"]:focus,
+.form-group input[type="text"]:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    outline: none;
+}
+
+button, .button-link { /* General button styles, #loadExampleButton overrides some */
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover, .button-link:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+#statusMessage {
+    margin-top: 25px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #155724;
+    border: 1px solid rgba(40, 167, 69, 0.4);
+}
+
+.status-error {
+    background-color: rgba(220, 53, 69, 0.15);
+    color: #721c24;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.status-info {
+    background-color: rgba(23, 162, 184, 0.15);
+    color: #0c5460;
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+
+#goToChatLink {
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+@media (max-width: 600px) {
+    .page-container {
+        padding: 10px;
+    }
+    .card { /* Applies to .landing-info as well */
+        padding: 20px;
+    }
+    .landing-info h2 {
+        font-size: 1.5em;
+    }
+    .landing-info p {
+        font-size: 0.95em;
+    }
+    #loadExampleButton {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+
+    h1 { /* For api_keys.html */
+        font-size: 24px;
+    }
+    .form-group input[type="password"],
+    .form-group input[type="text"] {
+        font-size: 14px;
+    }
+    button, .button-link {
+        font-size: 15px;
+        padding: 10px 20px;
+    }
+}

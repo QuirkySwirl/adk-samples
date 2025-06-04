@@ -1,0 +1,286 @@
+/* Styles specific to the chat interface */
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    max-height: 700px;
+    min-height: 400px;
+    width: 100%;
+    background-color: rgba(245, 245, 245, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+}
+
+.api-key-status-container {
+    padding: 10px 15px;
+    background-color: rgba(0, 0, 0, 0.05);
+    font-size: 0.85em;
+    color: #444;
+    text-align: right;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.api-key-status-container a {
+    color: #0069d9;
+    text-decoration: none;
+    font-weight: 500;
+}
+.api-key-status-container a:hover {
+    text-decoration: underline;
+}
+
+.chat-messages-area {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message {
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 78%;
+    line-height: 1.55;
+    word-wrap: break-word;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+.message p:first-of-type {
+    margin-top: 0;
+}
+.message p:last-of-type {
+    margin-bottom: 0;
+}
+
+
+.message-user {
+    background-color: rgba(0, 123, 255, 0.7);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 8px;
+}
+
+.message-agent {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #212529;
+    align-self: flex-start;
+    border-bottom-left-radius: 8px;
+}
+
+.message-system, .message-error {
+    background-color: rgba(108, 117, 125, 0.3);
+    color: #495057;
+    align-self: center;
+    font-size: 0.9em;
+    text-align: center;
+    max-width: 90%;
+    border-radius: 10px;
+}
+
+.loading-indicator {
+    padding: 15px;
+    text-align: center;
+    color: #555;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.loading-indicator::after {
+    content: ' .';
+    animation: dots 1s steps(5, end) infinite;
+}
+@keyframes dots {
+    0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+    40% { color: #555; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+    60% { text-shadow: .25em 0 0 #555, .5em 0 0 rgba(0,0,0,0);}
+    80%, 100% { text-shadow: .25em 0 0 #555, .5em 0 0 #555;}
+}
+
+
+.chat-input-area {
+    display: flex;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#userInput {
+    flex-grow: 1;
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    margin-right: 10px;
+    font-size: 1em;
+    color: #333;
+}
+#userInput::placeholder {
+    color: #666;
+}
+#userInput:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#sendButton {
+    padding: 12px 22px;
+    font-size: 1em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+
+#sendButton:hover {
+    background-color: #0056b3;
+}
+
+/* Card rendering styles for structured messages */
+.cards-container, .airbnb-cards-container { /* Added .airbnb-cards-container */
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 5px;
+    margin-top: 10px;
+    gap: 15px;
+}
+
+.destination-card, .airbnb-card { /* Added .airbnb-card */
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    max-width: 250px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    padding: 15px;
+    transition: transform 0.2s ease-in-out;
+}
+.destination-card:hover, .airbnb-card:hover { /* Added .airbnb-card */
+    transform: translateY(-3px);
+}
+
+.destination-card img, .airbnb-card img { /* Added .airbnb-card */
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.destination-card h4, .airbnb-card h4 { /* Added .airbnb-card */
+    margin: 8px 0 5px 0;
+    font-size: 1.1em;
+    color: #333;
+    font-weight: 600;
+}
+
+.destination-card p, .airbnb-card p { /* Added .airbnb-card */
+    font-size: 0.85em;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    flex-grow: 1;
+}
+.destination-card .rating, .airbnb-card .rating { /* Added .airbnb-card */
+    font-size: 0.8em;
+    color: #e67e22;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.destination-card .card-button, .airbnb-card .card-button { /* Added .airbnb-card */
+    padding: 8px 12px;
+    font-size: 0.85em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    margin-top: auto;
+}
+.destination-card .card-button:hover, .airbnb-card .card-button:hover { /* Added .airbnb-card */
+    background-color: #0056b3;
+}
+
+/* Styles for Map Display Area */
+.map-display-area {
+    padding: 10px 15px;
+    margin-top: 10px;
+    border: 1px dashed #ccc;
+    background-color: rgba(0,0,0,0.03);
+    border-radius: 8px;
+    font-size: 0.9em;
+}
+.map-display-area p {
+    margin: 5px 0;
+    color: #333;
+}
+.map-display-area a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+.map-display-area a:hover {
+    text-decoration: underline;
+}
+
+/* Styles for Clickable Actions */
+.actions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 5px;
+}
+
+.action-button {
+    padding: 8px 15px;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-1px);
+}
+.action-button:active {
+    transform: translateY(0px);
+}
+
+
+/* Scrollbar styling for webkit browsers */
+.cards-container::-webkit-scrollbar, .airbnb-cards-container::-webkit-scrollbar { height: 8px; } /* Added .airbnb-cards-container */
+.cards-container::-webkit-scrollbar-track, .airbnb-cards-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; } /* Added .airbnb-cards-container */
+.cards-container::-webkit-scrollbar-thumb, .airbnb-cards-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; } /* Added .airbnb-cards-container */
+.cards-container::-webkit-scrollbar-thumb:hover, .airbnb-cards-container::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); } /* Added .airbnb-cards-container */
+
+.chat-messages-area::-webkit-scrollbar { width: 6px; }
+.chat-messages-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.03); border-radius: 10px; }
+.chat-messages-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+.chat-messages-area::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }

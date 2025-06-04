@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Concierge - API Key Setup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Setup Your API Keys</h1>
+            <p>Please provide your API keys to enable full functionality of the Travel Concierge. Your keys will be stored locally in your browser and sent to a backend for verification and use during requests.</p>
+
+            <form id="apiKeyForm">
+                <div class="form-group">
+                    <label for="googlePlacesApiKey">Google Places API Key</label>
+                    <input type="password" id="googlePlacesApiKey" placeholder="Enter your Google Places API Key">
+                </div>
+
+                <div class="form-group">
+                    <label for="geminiApiKey">Gemini API Key (Google AI Studio)</label>
+                    <input type="password" id="geminiApiKey" placeholder="Enter your Gemini API Key">
+                </div>
+
+                <button type="button" id="saveApiKeyButton">Save API Keys</button>
+            </form>
+
+            <div id="statusMessage"></div>
+
+            <a href="index.html" id="goToChatLink" class="button-link" style="display: none;">Go to Travel Concierge</a>
+        </div>
+    </div>
+
+    <script src="api_keys.js" defer></script>
+</body>
+</html>

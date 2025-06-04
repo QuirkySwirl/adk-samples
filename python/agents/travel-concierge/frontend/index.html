@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Concierge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chat_style.css">
+</head>
+<body>
+    <div class="page-container"> <!-- Wrapper for overall page layout -->
+        <div class="landing-info card">
+            <h2>Welcome to the AI Travel Concierge!</h2>
+            <p>Your personal assistant for planning unforgettable journeys. Get inspired, plan your activities, and let us help you with the details.</p>
+            <p>To get started, you can ask for travel ideas, or we can load an example itinerary for you to explore.</p>
+            <button id="loadExampleButton" class="button-link">Load Seattle Adventure (Example)</button>
+        </div>
+
+        <div class="chat-container">
+            <div class="api-key-status-container"> <!-- Moved from chat_style.css for clarity -->
+                API Key: <span id="apiKeyStatus">Checking...</span>.
+                <a href="api_keys.html">Manage Keys</a>
+            </div>
+
+            <div id="chatMessages" class="chat-messages-area">
+                <!-- Chat messages will appear here -->
+            </div>
+
+            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                <p>Thinking...</p>
+            </div>
+
+            <form id="chatForm" class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Ask your travel question..." autocomplete="off">
+                <button type="submit" id="sendButton">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="chat.js" defer></script>
+</body>
+</html>

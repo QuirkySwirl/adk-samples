@@ -4,6 +4,68 @@ This sample demonstrates the use of Agent Development Kit to deliver a new user 
 
 This example includes illustrations with ADK supported tools such as Google Places API, Google Search Grounding and MCP.
 
+---
+
+## AI Travel Concierge Web Application
+
+This project includes a web-based user interface (frontend and backend) for interacting with the Python-based Travel Concierge ADK agent. It provides an alternative way to experience the agent's capabilities through a chat interface in your browser.
+
+**Overview:**
+
+The web application allows users to:
+*   Manage API keys (Google Places and Gemini) through a simple UI.
+*   Engage in an interactive chat session with the Travel Concierge agent.
+*   Experience a modern, glassmorphic UI design.
+*   View rich agent responses, including:
+    *   Destination suggestion cards.
+    *   Placeholders for map data.
+    *   Clickable action buttons for quick replies.
+    *   Display of Airbnb listings (experimental, depends on agent's MCP configuration).
+*   Load an example itinerary (e.g., a Seattle adventure) to quickly explore the agent's capabilities.
+
+**Architecture:**
+
+*   **Frontend:** Built with plain HTML, CSS, and JavaScript. No complex JavaScript frameworks are used, ensuring simplicity and ease of understanding.
+    *   Located in the `frontend/` directory.
+*   **Backend:** A Python Flask application that serves as an intermediary between the frontend and the agent service.
+    *   Main file: `backend_app.py`.
+*   **Agent Interaction:** The Flask backend communicates with the ADK agent via a service layer.
+    *   Service file: `travel_agent_service.py`, which uses the ADK's `SessionRunner` to interact with the `root_agent`.
+
+**Setup and Running the Web Application:**
+
+For detailed prerequisites, setup instructions (including Poetry for Python dependencies), and comprehensive testing steps, please refer to the **[`testing_guide.md`](./testing_guide.md)** file.
+
+A brief overview to get started:
+1.  Navigate to the `python/agents/travel-concierge/` directory in your terminal.
+2.  Install dependencies: `poetry install`
+3.  Activate the virtual environment: `poetry shell` (or `eval $(poetry env activate)`)
+4.  Run the backend server: `python backend_app.py`
+    *   The server will typically run on `http://127.0.0.1:5001/`.
+5.  Open the API key setup page in your web browser by navigating to the local file: `frontend/api_keys.html`.
+    *   **It is crucial to set your Google Places API Key and Gemini API Key via this page first.** These keys are stored in your browser's local storage and sent to the backend as needed.
+6.  Once keys are saved, navigate to `frontend/index.html` (or click the "Go to Travel Concierge" link) to start interacting with the agent.
+
+**Key Files for the Web Application:**
+
+*   `backend_app.py`: The main Flask application providing API endpoints.
+*   `travel_agent_service.py`: The service layer that interfaces with the ADK Travel Concierge agent.
+*   `frontend/`: Directory containing all frontend HTML, CSS, and JavaScript files.
+    *   `frontend/index.html`: The main chat interface.
+    *   `frontend/api_keys.html`: Page for managing API keys.
+    *   `frontend/chat.js`, `frontend/api_keys.js`: JavaScript logic for the frontend.
+    *   `frontend/style.css`, `frontend/chat_style.css`: CSS for styling.
+*   `testing_guide.md`: Comprehensive guide for setting up, running, and testing this web application.
+*   `travel_concierge/`: Directory containing the original ADK agent Python code.
+
+**Dependencies for Full Functionality:**
+
+*   **Google Places API Key:** Required for location-based services used by the agent.
+*   **Gemini API Key (or equivalent Google AI Studio API Key):** Required for the generative AI models used by the ADK agent.
+    *   These keys should be configured through the web UI (`frontend/api_keys.html`) for the web application to function correctly.
+
+---
+
 ## Overview
 
 A traveler's experience can be divided into two stages: pre-booking and post-booking. In this example, each stage involves the use of multiple specialized agents working together to provide the concierge experience.
@@ -63,14 +125,24 @@ Expand on the "Key Components" from above.
     * The session state is used to store information such as the itinerary, and temporary AgentTools' responses.
     * There are a number of premade itineraries that can be loaded for test runs. See 'Running the Agent' below on how to run them.
 
-## Setup and Installation
+## Setup and Installation (Original ADK Agent)
+
+This section details setting up the core ADK agent if you intend to run it directly using `adk` commands or for deeper development on the agent itself. For running the Web Application, see the new section above and `testing_guide.md`.
 
 ### Folder Structure
+The folder structure now includes the web application components:
 ```
 .
 ├── README.md
 ├── travel-concierge-arch.png
 ├── pyproject.toml
+├── frontend/                     <-- NEW Web Application UI
+│   ├── index.html
+│   ├── api_keys.html
+│   └── ... (CSS, JS files)
+├── backend_app.py                <-- NEW Web Application Backend
+├── travel_agent_service.py       <-- NEW Web Application Service Layer
+├── testing_guide.md              <-- NEW Web Application Test Guide
 ├── travel_concierge/
 │   ├── shared_libraries/
 │   ├── tools/
@@ -88,7 +160,7 @@ Expand on the "Key Components" from above.
 └── deployment/
 ```
 
-### Prerequisites
+### Prerequisites (Original ADK Agent)
 
 - Python 3.11+
 - Google Cloud Project (for Vertex AI integration)
@@ -96,7 +168,7 @@ Expand on the "Key Components" from above.
 - Google Agent Development Kit 1.0+
 - Poetry: Install Poetry by following the instructions on the official Poetry [website](https://python-poetry.org/docs/)
 
-### Installation
+### Installation (Original ADK Agent)
 
 1.  Clone the repository:
 
@@ -121,8 +193,7 @@ Expand on the "Key Components" from above.
     ```
     # Choose Model Backend: 0 -> ML Dev, 1 -> Vertex
     GOOGLE_GENAI_USE_VERTEXAI=1
-    # ML Dev backend config, when GOOGLE_GENAI_USE_VERTEXAI=0, ignore if using Vertex.
-    # GOOGLE_API_KEY=YOUR_VALUE_HERE
+    # GOOGLE_API_KEY=YOUR_VALUE_HERE # For ML Dev or if GOOGLE_GENAI_USE_VERTEXAI=0
 
     # Vertex backend config
     GOOGLE_CLOUD_PROJECT=__YOUR_CLOUD_PROJECT_ID__
@@ -135,13 +206,13 @@ Expand on the "Key Components" from above.
     GOOGLE_CLOUD_STORAGE_BUCKET=YOUR_BUCKET_NAME_HERE
 
     # Sample Scenario Path - Default is an empty itinerary
-    # This will be loaded upon first user interaction.
-    #
-    # Uncomment one of the two, or create your own.
+    # This will be loaded upon first user interaction when running ADK directly.
+    # For the Web Application, example loading is handled by a button in the UI.
     #
     # TRAVEL_CONCIERGE_SCENARIO=travel_concierge/profiles/itinerary_seattle_example.json
     TRAVEL_CONCIERGE_SCENARIO=travel_concierge/profiles/itinerary_empty_default.json
     ```
+    *Note: When using the Web Application, API keys are managed via its UI, not primarily through these `.env` variables for the Flask server's direct use of the agent.*
 
 4. Authenticate your GCloud account.
     ```bash
@@ -155,7 +226,9 @@ Expand on the "Key Components" from above.
     ```
     Repeat this command whenever you have a new shell, before running the commands in this README.
 
-## Running the Agent
+## Running the Agent (Original ADK Methods)
+
+This section describes how to run the agent using ADK's built-in tools, which is different from running the Web Application described earlier.
 
 ### Using `adk`
 
@@ -183,24 +256,19 @@ Here is something to try:
 * After interacting with the agents for a while, you may ask: "Go ahead to planning".
 
 
-### Programmatic Access
+### Programmatic Access (ADK Server)
 
-Below is an example of interacting with the agent as a server using Python. 
-Try it under the travel-concierge directory:
-
-First, establish a quick development API server for the travel_concierge package.
+Below is an example of interacting with the agent as a server using Python with ADK's server.
+First, establish an API server for the `travel_concierge` package:
 ```bash
 adk api_server travel_concierge
 ```
-This will start a fastapi server at http://127.0.0.1:8000.
-You can access its API docs at http://127.0.0.1:8000/docs
-
-Here is an example client that only call the server for two turns:
+This starts a FastAPI server at http://127.0.0.1:8000.
+Example client:
 ```bash
 python tests/programmatic_example.py
 ```
-
-You may notice that there are code to handle function responses. We will revisit this in the [GUI](#gui) section below.
+The `tests/programmatic_example.py` also illustrates how to handle events and different types of agent responses, which inspired some of the design for the Web Application's rich content display.
 
 
 ### Sample Agent interaction
@@ -209,18 +277,18 @@ Two example sessions are provided to illustrate how the Travel Concierge operate
 - Trip planning from inspiration to finalized bookings for a trip to Peru ([`tests/pre_booking_sample.md`](tests/pre_booking_sample.md)).
 - In-trip experience for a short get away to Seattle, simulating the passage of time using a tool ([`tests/post_booking_sample.md`](tests/post_booking_sample.md)).
 
-### Worth Trying
+### Worth Trying (Direct ADK Interaction)
 
-Instead of interacting with the concierge one turn at time. Try giving it the entire instruction, including decision making criteria, and watch it work, e.g. 
+Instead of interacting with the concierge one turn at time. Try giving it the entire instruction, including decision making criteria, and watch it work, e.g.
 
   *"Find flights to London from JFK on April 20th for 4 days. Pick any flights and any seats; also Any hotels and room type. Make sure you pick seats for both flights. Go ahead and act on my behalf without my input, until you have selected everything, confirm with me before generating an itinerary."*
 
 Without specifically optimizing for such usage, this cohort of agents seem to be able to operate by themselves on your behalf with very little input.
 
 
-## Running Tests
+## Running Tests (Original ADK Agent)
 
-To run the illustrative tests and evaluations, install the extra dependencies and run `pytest`:
+To run the illustrative tests and evaluations for the core ADK agent, install the extra dependencies and run `pytest`:
 
 ```
 poetry install --with dev
@@ -239,9 +307,9 @@ To run agent trajectory tests:
 pytest eval
 ```
 
-## Deploying the Agent
+## Deploying the Agent (Original ADK Agent to Vertex AI)
 
-To deploy the agent to Vertex AI Agent Engine, run the following command under `travel-concierge`:
+To deploy the agent to Vertex AI Agent Engine, run:
 
 ```bash
 poetry install --with deployment
@@ -265,25 +333,23 @@ To delete the agent, run the following command (using the resource ID returned p
 python3 deployment/deploy.py --delete --resource_id=<RESOURCE_ID>
 ```
 
-## Application Development
+## Application Development (Original ADK Agent)
 
 ### Callbacks and initial State
 
-The `root_agent` in this demo currently has a `before_agent_callback` registered to load an initial state, such as user preferences and itinerary, from a file into the session state for interaction. The primary reason for this is to reduce the amount of set up necessary, and this makes it easy to use the ADK UIs.
+The `root_agent` in this demo currently has a `before_agent_callback` registered to load an initial state from a file (defined by `TRAVEL_CONCIERGE_SCENARIO`) into the session state. This is primarily for ease of use with ADK UIs and direct runs. For the Web Application, example loading is handled explicitly via an API endpoint.
 
-In a realistic application scenario, initial states can be included when a new `Session` is being created, there by satisfying use cases where user preferences and other pieces of information are most likely loaded from external databases.
- 
 ### Memory vs States
 
-In this example, we are using the session states as memory for the concierge, to store the itinerary, and intermediate agent / tools / user preference responses. In a realistic application scenario, the source for user profiles should be an external database, and the 
-reciprocal writes to session states from tools should in addition be persisted, as a write-through, to external databases dedicated for user profiles and itineraries. 
+This example uses session states as memory. In production, user profiles and itineraries would typically be persisted in external databases.
 
 ### MCP
 
-An example using Airbnb's MCP server is included. ADK supports MCP and provides several MCP tools.
-This example attaches the Airbnb search and listing MCP tools to the `planning_agent`, and ask the concierge to simply find an airbnb given certain dates. The concierge will transfer the request to the planning agent which in turn will call the Airbnb search MCP tool.
+An example using Airbnb's MCP server is included in `tests/mcp_abnb.py`. This test sets up an MCP server connection for the `planning_agent`. For the Web Application to display Airbnb results, the ADK agent it interacts with (via `travel_agent_service.py`) must be similarly configured and the MCP server must be accessible to it.
 
-To try the example, first set up nodejs and npx from Node.js [website](https://nodejs.org/en/download)
+To try the `mcp_abnb.py` example directly:
+1.  Ensure Node.js and npx are installed.
+2.  Run from `travel-concierge/` directory: `python -m tests.mcp_abnb`
 
 Making sure:
 ```
@@ -364,142 +430,27 @@ FOUND planning_agent
 5.  Room in San Diego: [https://www.airbnb.com/rooms/53010806](https://www.airbnb.com/rooms/53010806)
 ```
 
-### GUI
+### GUI (Considerations for Rich Output - relevant to Web App)
 
-A typical end-user will be interacting with agents via GUIs instead of pure text. The front-end concierge application will likely render several kinds of agent responses graphically and/or with rich media, for example:
-- Destination ideas as a carousel of cards,
-- Points of interest / Directions on a Map,
-- Expandable videos, images, link outs.
-- Selection of flights and hotels as lists with logos, 
-- Selection of flight seats on a seating chart,
-- Clickable templated responses.
+The section in the original README about "GUI" and handling different agent responses (cards, maps, etc.) via ADK Events is highly relevant to how the Web Application's `chat.js` and `travel_agent_service.py` attempt to parse and render rich content. The `tests/programmatic_example.py` was a key reference.
 
-Many of these can be achieved via ADK's Events. This is because:
-- All function calls and function responses are reported as events by the session runner.
-- In this travel-concierge example, several sub-agents and tools use an explicit pydantic schema and controlled generation to generate a JSON response. These agents are: place agent (for destinations), poi agent (for pois and activities), flights and hotels selection agents, seats and rooms selection agents, and itinerary.
-- When a session runner service is wrapped as a server endpoint, the series of events carrying these JSON payloads can be streamed over to the application.
-- When the application recognizes the payload schema by their source agent, it can therefore render the payload accordingly.
+## Customization (Original ADK Agent)
 
-To see how to work with events, agents and tools responses, open the file [`tests/programmatic_example.py`](tests/programmatic_example.py).
+Ideas for customizing the core ADK agent:
 
-Run the test client code with:
-```
-python tests/programmatic_example.py 
-```
+*   Load different premade itineraries (see `.env` and `TRAVEL_CONCIERGE_SCENARIO`).
+*   Create your own itineraries based on `types.py`.
+*   Integrate with real external APIs for flights, hotels, etc.
+*   Refine agent logic for more complex scenarios.
 
-You will get outputs similar to this below:
-```
-[user]: "Inspire me about Maldives"
+## Troubleshoot (Original ADK Agent)
 
-...
-
-[root_agent]: transfer_to_agent( {"agent_name": "inspiration_agent"} )
-
-...
-
-[inspiration_agent]: place_agent responds -> {
-  "id": "af-be786618-b60b-45ee-a801-c40fd6811e60",
-  "name": "place_agent",
-  "response": {
-    "places": [
-      {
-        "name": "Malé",
-        "country": "Maldives",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Male%2C_Maldives_panorama_2016.jpg/1280px-Male%2C_Maldives_panorama_2016.jpg",
-        "highlights": "The vibrant capital city, offering bustling markets, historic mosques, and a glimpse into local Maldivian life.",
-        "rating": "4.2"
-      },
-      {
-        "name": "Baa Atoll",
-        "country": "Maldives",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Baa_Atoll_Maldives.jpg/1280px-Baa_Atoll_Maldives.jpg",
-        "highlights": "A UNESCO Biosphere Reserve, famed for its rich marine biodiversity, including manta rays and whale sharks, perfect for snorkeling and diving.",
-        "rating": "4.8"
-      },
-      {
-        "name": "Addu Atoll",
-        "country": "Maldives",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Addu_Atoll_Maldives.jpg/1280px-Addu_Atoll_Maldives.jpg",
-        "highlights": "The southernmost atoll, known for its unique equatorial vegetation, historic WWII sites, and excellent diving spots with diverse coral formations.",
-        "rating": "4.5"
-      }
-    ]
-  }
-}
-
-[app]: To render a carousel of destinations
-
-[inspiration_agent]: Maldives is an amazing destination! I see three great options:
-
-1.  **Malé:** The capital city, where you can experience local life, markets, and mosques.
-2.  **Baa Atoll:** A UNESCO Biosphere Reserve, perfect for snorkeling and diving, with manta rays and whale sharks.
-3.  **Addu Atoll:** The southernmost atoll, offering unique vegetation, WWII history, and diverse coral for diving.
-
-Are any of these destinations sound interesting? I can provide you with some activities you can do in the destination you selected.
-
-[user]: "Suggest some acitivities around Baa Atoll"
-
-...
-
-```
-
-In an environment where the events are passed from the server running the agents to an application front-end, the application can use the method in this example to parse and identify which payload is being sent and choose the most appropriate payload renderer / handler.
-
-## Customization
-
-The following are some ideas how one can reuse the concierge and make it your own.
-
-### Load a premade itinerary to demo the in-trip flow
-- By default, a user profile and an empty itinerary is loaded from `travel_concierge/profiles/itinerary_empty_default.json`.
-- To specify a different file to load, such as the Seattle example `travel_concierge/profiles/itinerary_seattle_example.json`:
-  - Set the environmental variable `TRAVEL_CONCIERGE_SCENARIO` to `travel_concierge/profiles/itinerary_seattle_example.json` in the `.env`.
-  - Then restart `adk web` and load the travel concierge.
-- When you start interacting with the agent, the state will be loaded. 
-- You can see the loaded user profile and itinerary when you select "State" in the GUI.
-
-
-### Make your own premade itinerary for demos
-
-- The Itinerary schema is defined in types.py
-- Make a copy of `itinerary_seattle_example.json` and make your own `itinerary` following the schema.
-- Use the above steps to load and test your new itinerary.
-- For the `user_profile` dict:
-  - `passport_nationality` and `home` are mandatory fields, modify only the `address` and `local_prefer_mode`.
-  - You can modify / add additional profile fields to the 
-
-
-### Integration with external APIs
-
-There are many opportunities for enhancements, customizations and integration in this example:
-- Connecting to real flights / seats selection systems
-- Connecting to real hotels / rooms selection systems
-- Usage of external memory persistence services, or databases, instead of the session's state
-- Use of the Google Maps [Route API](https://developers.google.com/maps/documentation/routes) in `day_of` agent.
-- Connect to external APIs for visa / medical / travel advisory and NOAA storm information instead of using Google Search Grounding.
-
-
-### Refining Agents
-
-The following are just the starting ideas:
-- A more sophisticated itinerary and activity planning agent; For example, currently the agent does not handle flights with lay-over.
-- Better accounting - accuracy in calculating costs on flights, hotels + others.
-- A booking agent that is less mundane and more efficient
-- For the pre-trip and in-trip agents, there are opportunities to dynamically adjusts the itinerary and resolves trip exceptions
-
-## Troubleshoot
-
-The following occasionally happens while interaction with the agent:
-- "Malformed" function call or response, or pydantic errors - when this happens simply tell the agent to "try again". 
-- If the agents tries to call a tool that doesn't exist, tell the agent that it is the "wrong tool, try again", the agent  is often able to self correct. 
-- Similarly, if you have waited for a while and the agent has stopped in the middle of executing a series of actions, ask the agent "what's next" to nudge it forward.
-
-These happens occasionally, it is likely due to variations in JSON responses that requires more rigorous experimentation on prompts and generation parameters to attain more stable results. Within an application, these retries can also be built into the application as part of exception handling.
-
+Common issues when interacting directly with the ADK agent:
+- "Malformed" function calls/responses: Try telling the agent to "try again".
+- Agent calling wrong tools: Try "wrong tool, try again".
+- Agent stops mid-action: Nudge with "what's next".
+These are less relevant when using the Web Application, as the interaction is mediated.
 
 ## Disclaimer
 
-This agent sample is provided for illustrative purposes only and is not intended for production use. It serves as a basic example of an agent and a foundational starting point for individuals or teams to develop their own agents.
-
-This sample has not been rigorously tested, may contain bugs or limitations, and does not include features or optimizations typically required for a production environment (e.g., robust error handling, security measures, scalability, performance considerations, comprehensive logging, or advanced configuration options).
-
-Users are solely responsible for any further development, testing, security hardening, and deployment of agents based on this sample. We recommend thorough review, testing, and the implementation of appropriate safeguards before using any derived agent in a live or critical system.
+This agent sample (both the core ADK agent and the Web Application) is provided for illustrative purposes only and is not intended for production use. It serves as a basic example and a foundational starting point. Users are responsible for further development, testing, and security.

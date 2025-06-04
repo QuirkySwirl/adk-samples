@@ -1,0 +1,100 @@
+## Refactoring Analysis for Travel Concierge Agent
+
+This document outlines the analysis of the Travel Concierge agent and a proposed strategy for refactoring it to be callable from a backend API.
+
+### 1. Agent Structure Analysis
+
+**1.1. Main Entry Point:**
+The main entry point for the agent is the `root_agent` object, an instance of `google.adk.agents.Agent`, defined in `python/agents/travel-concierge/travel_concierge/agent.py`. This agent orchestrates various sub-agents for different tasks (inspiration, planning, booking, etc.).
+
+**1.2. API Key Configuration (Google Places API):**
+- The Google Places API key is accessed via an environment variable: `os.getenv("GOOGLE_PLACES_API_KEY")`.
+- This is handled within the `PlacesService` class located in `python/agents/travel-concierge/travel_concierge/tools/places.py`. The `_check_key()` method specifically retrieves the key.
+- For a backend service, this key will need to be passed securely to the agent's environment or directly to the service.
+
+**1.3. Typical Input Format:**
+- The agent primarily processes natural language user queries.
+- The root agent's prompt (`ROOT_AGENT_INSTR` in `python/agents/travel-concierge/travel_concierge/prompt.py`) indicates that it expects user input as text.
+- The agent also uses contextual information like `user_profile` and `itinerary` which are referenced as placeholders (`{user_profile}`, `{itinerary}`) in the prompts. This implies an underlying state management system. The `constants.py` file defines keys like `PROF_KEY` ("user_profile") and `ITIN_KEY` ("itinerary") for accessing this state.
+
+**1.4. Typical Output/Response Format:**
+- The agent's responses are primarily textual and conversational, designed for direct interaction with a user. The `ROOT_AGENT_INSTR` states: "After every tool call, pretend you're showing the result to the user and keep your response limited to a phrase."
+- For backend API usage, this output needs to be structured (e.g., JSON), including not just the textual response but also any changes to the agent's state (like an updated itinerary).
+
+**1.5. Key Classes and Functions:**
+- `google.adk.agents.Agent`: The base class for creating agents.
+- `travel_concierge.agent.root_agent`: The central orchestrating agent.
+- Sub-agents (e.g., `InspirationAgent`, `PlanningAgent`): Specialized agents for specific tasks, found in `travel_concierge/sub_agents/`.
+- `travel_concierge.tools.places.PlacesService`: Class responsible for interacting with the Google Places API.
+- `travel_concierge.tools.places.map_tool`: An example tool function that uses `PlacesService`.
+- Prompts in `travel_concierge/prompt.py`: Define the instructions and behavior of the agents.
+- `travel_concierge.shared_libraries.constants.py`: Defines constants for state keys.
+- `travel_concierge.tools.memory._load_precreated_itinerary`: A callback used by the `root_agent` to load initial itinerary data, suggesting a mechanism for initializing state.
+
+### 2. Proposed Refactoring Strategy
+
+The goal is to make the agent callable from a backend API, receiving a user query and API keys, and returning a structured response.
+
+**2.1. Create `travel_agent_service.py`:**
+- This new Python script will be created in the `python/agents/travel-concierge/` directory.
+- It will contain the API-callable interface to the agent.
+
+**2.2. Define an Interface Function/Class:**
+- A function, for example, `invoke_travel_agent(user_query: str, google_places_api_key: str, user_profile: dict = None, itinerary: dict = None) -> dict`, will be defined in `travel_agent_service.py`.
+
+**2.3. Function Implementation Details (`invoke_travel_agent`):**
+
+   **a. API Key Management:**
+     - Before initializing or running the agent, set the Google Places API key in the environment:
+       `import os`
+       `os.environ["GOOGLE_PLACES_API_KEY"] = google_places_api_key`
+     - Consider the scope and potential conflicts if the backend service handles multiple API keys or other environment-sensitive operations.
+
+   **b. Agent and State Initialization:**
+     - Import the `root_agent` from `travel_concierge.agent`.
+     - The `google.adk.agents.Agent` class (or its execution method) will need to be invoked. It's assumed it has a way to accept an initial state.
+     - Prepare an initial state dictionary. For example:
+       `initial_state = {}`
+       `if user_profile:`
+       `  initial_state[PROF_KEY] = user_profile`
+       `if itinerary:`
+       `  initial_state[ITIN_KEY] = itinerary`
+       `  initial_state[ITIN_INITIALIZED] = True # Based on _load_precreated_itinerary logic`
+     - This `initial_state` would be passed to the agent's execution method. The exact mechanism for passing state depends on the ADK's API (e.g., `root_agent.run(query=user_query, state=initial_state)`).
+
+   **c. Agent Execution:**
+     - Invoke the agent with the `user_query` and the prepared `initial_state`.
+     - Example (conceptual, actual ADK API might differ):
+       `response_text, final_state = root_agent.process_query(user_query, initial_state)` or `result = root_agent.run(input=user_query, session_state=initial_state)`
+     - The method of invocation needs to be determined by examining the `google.adk.agents.Agent` class documentation or source if available.
+
+   **d. Structured Response Generation:**
+     - The function should return a JSON serializable dictionary.
+     - This dictionary should include:
+       - The agent's textual response.
+       - The updated itinerary (extracted from the `final_state` using `ITIN_KEY`).
+       - The updated user profile (if applicable, from `final_state` using `PROF_KEY`).
+       - Any errors encountered during execution.
+     - Example:
+       ```python
+       return {
+           "text_response": response_text,
+           "updated_itinerary": final_state.get(ITIN_KEY),
+           "updated_user_profile": final_state.get(PROF_KEY),
+           "agent_errors": [] # Populate if errors occur
+       }
+       ```
+
+   **e. Error Handling:**
+     - Wrap agent invocation in a try-except block to catch exceptions.
+     - Populate the `agent_errors` field in the response if issues arise.
+
+**2.4. Assumptions and Further Investigation:**
+- This strategy assumes that the `google.adk.agents.Agent` class provides methods to:
+    1.  Programmatically run the agent with a query.
+    2.  Pass an initial state/context (like user profile and itinerary).
+    3.  Retrieve the final state after processing.
+- If the agent relies on a global or persistent state outside of direct method parameters (e.g., a singleton state manager within ADK initialized elsewhere), the approach to state injection might need adjustment.
+- The exact method signatures for agent invocation and state management in the ADK are crucial and would need to be confirmed by checking ADK's documentation or source code. The `Agent.run()` method in ADK typically takes `input` and `session_state` as arguments which aligns with this proposal.
+
+This refactoring will decouple the agent's core logic from its current interactive execution model, allowing it to be integrated into a broader backend system.
