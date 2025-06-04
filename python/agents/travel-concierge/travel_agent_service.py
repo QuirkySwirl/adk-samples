@@ -4,8 +4,8 @@ import asyncio
 from typing import Dict, Any, Union
 
 from google.adk.runtime.runner import SessionRunner
-from travel_concierge.agent import root_agent
-from travel_concierge.shared_libraries import constants
+from travel_agent_core.agent import root_agent
+from travel_agent_core.shared_libraries import constants
 
 ENV_GOOGLE_API_KEY = "GOOGLE_API_KEY"
 ENV_GOOGLE_PLACES_API_KEY = "GOOGLE_PLACES_API_KEY"
@@ -192,7 +192,10 @@ def load_example_itinerary_agent(
     google_places_api_key: str,
     gemini_api_key: str,
 ) -> Dict[str, Any]:
-    scenario_file_path = 'travel_concierge/profiles/itinerary_seattle_example.json'
+    # This path will be relative to where the agent core logic is,
+    # so if travel_agent_core is the top-level package, this path needs to be valid from there.
+    # Assuming the profiles are part of the travel_agent_core package.
+    scenario_file_path = 'travel_agent_core/profiles/itinerary_seattle_example.json'
     initial_query = "Describe my loaded itinerary and suggest some initial actions."
 
     return _invoke_agent_core(
